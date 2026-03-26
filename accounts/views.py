@@ -503,7 +503,7 @@ def withdraw_create(request):
     WithdrawalRequest.objects.create(
         user=request.user,
         amount=amount,
-        currency="PHP",
+        currency="PKR",
         status="processing",
     )
 
@@ -1391,7 +1391,9 @@ def staff_dashboard(request):
             return min_h
         return int(min_h + (v / maxv) * (max_h - min_h))
 
-    current_reference = SystemSetting.get_reference_number()
+    pending_loans = LoanApplication.objects.filter(status="PENDING").count()
+    pending_withdrawals = WithdrawalRequest.objects.filter(status=WithdrawalRequest.STATUS_PROCESSING).count()
+    approved_loans_today = LoanApplication.objects.filter(status="APPROVED", approved_at__range=(today_start, today_end)).count()
 
     context = {
         "period": period,
@@ -1411,7 +1413,9 @@ def staff_dashboard(request):
         "h_last_week": scale_height(reg_last_week),
         "h_this_month": scale_height(reg_this_month),
         "h_last_month": scale_height(reg_last_month),
-        "current_reference": current_reference,
+        "pending_loans": pending_loans,
+        "pending_withdrawals": pending_withdrawals,
+        "approved_loans_today": approved_loans_today,
     }
     return render(request, "staff_dashboard.html", context)
 @login_required

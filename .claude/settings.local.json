@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -n \"PHP\\\\|₱\\\\|peso\\\\|PKR\\\\|Philippine\\\\|Philippines\" c:/Mana_system1/templates/*.html)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

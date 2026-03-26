@@ -162,59 +162,73 @@
     </div>
   </div>
 
-  <!-- ===== Reference Number Card ===== -->
+  <!-- ===== Pending Activity Card ===== -->
   <div class="perf-card" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); display: flex; flex-direction: column; position: relative;">
-    
-    <!-- Header: Reference No. centered, Icons on right -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative;">
-      <div style="flex: 1;"></div> <!-- Spacer for centering -->
-      
-      <!-- Centered Title -->
-      <div style="flex: 2; text-align: center;">
-        <div style="font-size: 18px; font-weight: 800; color: rgba(255,255,255,0.95); letter-spacing: 2px; text-transform: uppercase;">Reference No.</div>
-      </div>
-      
-      <!-- Icons: Home (Frontend) + Key -->
-      <div style="flex: 1; display: flex; justify-content: flex-end; gap: 8px;">
-        <a href="/" target="_blank" title="View Frontend" 
-           style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; text-decoration: none; font-size: 18px; color: #fff; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2);"
-           onmouseover="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(-2px)';" 
-           onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='none';">
-          🏠
-        </a>
-        <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; font-size: 18px; border: 1px solid rgba(255,255,255,0.2);">
-          🔑
-        </div>
-      </div>
+
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+      <div style="font-size: 16px; font-weight: 800; color: rgba(255,255,255,0.95); letter-spacing: 2px; text-transform: uppercase;">Pending Activity</div>
+      <a href="/" target="_blank" title="View Site"
+         style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:rgba(255,255,255,0.15);border-radius:10px;text-decoration:none;font-size:17px;border:1px solid rgba(255,255,255,0.2);transition:all 0.2s;"
+         onmouseover="this.style.background='rgba(255,255,255,0.25)';this.style.transform='translateY(-2px)';"
+         onmouseout="this.style.background='rgba(255,255,255,0.15)';this.style.transform='none';">🏠</a>
     </div>
 
-    <!-- Big Number Display -->
-    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 30px 0;">
-      <div style="font-size: 64px; font-weight: 950; color: #fff; letter-spacing: 6px; text-shadow: 0 4px 20px rgba(0,0,0,0.3); line-height: 1;">
-        {{ current_reference|default:"0000" }}
+    <!-- Stat Rows -->
+    <div style="flex:1; display:flex; flex-direction:column; gap:14px; justify-content:center;">
+
+      <!-- Pending Loans -->
+      <a href="{% url 'staff_loans' %}?status=PENDING" style="text-decoration:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:14px 18px;transition:all 0.2s;"
+             onmouseover="this.style.background='rgba(255,255,255,0.18)';"
+             onmouseout="this.style.background='rgba(255,255,255,0.10)';">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:22px;">📋</span>
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Pending Loans</div>
+              <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.1;">{{ pending_loans }}</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:700;">View →</div>
+        </div>
+      </a>
+
+      <!-- Pending Withdrawals -->
+      <a href="{% url 'staff_withdrawals' %}?status=processing" style="text-decoration:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.10);border:1px solid rgba(255,255,255,0.18);border-radius:14px;padding:14px 18px;transition:all 0.2s;"
+             onmouseover="this.style.background='rgba(255,255,255,0.18)';"
+             onmouseout="this.style.background='rgba(255,255,255,0.10)';">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:22px;">💸</span>
+            <div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Pending Withdrawals</div>
+              <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.1;">{{ pending_withdrawals }}</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.6);font-weight:700;">View →</div>
+        </div>
+      </a>
+
+      <!-- Approved Loans Today -->
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.14);border-radius:14px;padding:14px 18px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:22px;">✅</span>
+          <div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.65);font-weight:600;letter-spacing:1px;text-transform:uppercase;">Approved Today</div>
+            <div style="font-size:28px;font-weight:900;color:#fff;line-height:1.1;">{{ approved_loans_today }}</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:600;">Loans</div>
       </div>
-      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 12px; text-align: center;">
-        Users must enter this when registering
-      </div>
+
     </div>
-    
-    <!-- Update Form -->
-    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.25);">
-      <form method="post" action="{% url 'update_reference' %}" style="display: flex; gap: 12px; align-items: center;">
-        {% csrf_token %}
-        <input type="text" name="reference_number" value="{{ current_reference }}" 
-               placeholder="Enter new reference..." 
-               style="flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-weight: 700; font-size: 16px; outline: none; transition: all 0.2s; text-align: center; letter-spacing: 1px;" 
-               onfocus="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='rgba(255,255,255,0.5)';" 
-               onblur="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';">
-        <button type="submit" 
-                style="background: #fff; color: #1e3c72; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.2s; white-space: nowrap; font-size: 14px;" 
-                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)';" 
-                onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)';">
-          Update
-        </button>
-      </form>
+
+    <!-- Footer: New registrations today -->
+    <div style="margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);font-weight:600;text-transform:uppercase;letter-spacing:1px;">New Users Today</div>
+      <div style="font-size:20px;font-weight:900;color:#fff;">{{ reg_today }}</div>
     </div>
+
   </div>
 
 </div>
@@ -271,9 +285,5 @@
         box-shadow: 0 12px 26px rgba(0,0,0,.18);
       }
       
-      /* Placeholder color for reference input */
-      input[name="reference_number"]::placeholder {
-        color: rgba(255,255,255,0.5);
-      }
-    </style>    
+</style>    
 {% endblock %}

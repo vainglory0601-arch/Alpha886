@@ -345,13 +345,13 @@ body {
     <div class="row">
       <div>
         <div class="title">Wallet</div>
-        <div class="sub">Balance (PHP)</div>
+        <div class="sub">Balance (PKR)</div>
       </div>
       <div class="pill">Last transaction - Today</div>
     </div>
 
     <div style="margin-top:12px; font-size:28px; font-weight:950;">
-  <span style="font-family:'Inter', system-ui, sans-serif; font-weight:700;">₱</span> <span data-balance>{{ request.user.balance|default:"0.00" }}</span>
+  <span style="font-family:'Inter', system-ui, sans-serif; font-weight:700;">Rs</span> <span data-balance>{{ request.user.balance|default:"0.00" }}</span>
 </div>
   </div>
 
@@ -362,7 +362,7 @@ body {
         <div class="title" style="font-size:16px;">Withdrawal amount</div>
         <div class="sub">Enter amount you want to withdraw</div>
       </div>
-      <div class="pill">PHP</div>
+      <div class="pill">PKR</div>
     </div>
 
     <input
@@ -375,7 +375,7 @@ body {
       placeholder="0.00"
       autocomplete="off"
     />
-    <div class="hint" id="amountHint">Max: PHP 0.00</div>
+    <div class="hint" id="amountHint">Max: PKR0.00</div>
   </div>
 
   <!-- ✅ UPDATED Card: OTP Code (now input number) -->
@@ -469,7 +469,7 @@ body {
     {% for w in withdrawals %}
       <div class="list-row">
         <div>
-          <div style="font-weight:900;">PHP {{ w.amount }} {{ w.currency }}</div>
+          <div style="font-weight:900;">PKR {{ w.amount }} {{ w.currency }}</div>
           <div class="muted">{{ w.created_at }}</div>
         </div>
 

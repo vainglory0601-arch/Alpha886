@@ -35,7 +35,12 @@ from django.views.decorators.http import require_POST, require_GET
 
 from dateutil.relativedelta import relativedelta
 
-from .models import SystemSetting, User, LoanApplication, LoanConfig, PaymentMethod, WithdrawalRequest
+from .models import SystemSetting, User, LoanApplication, PaymentMethod, WithdrawalRequest
+
+# Loan configuration — hardcoded, do not change via DB
+LOAN_MIN_AMOUNT = Decimal("300000.00")
+LOAN_MAX_AMOUNT = Decimal("8000000.00")
+LOAN_INTEREST_RATE = Decimal("0.005")  # 0.5% monthly
 from .forms import PaymentMethodForm, StaffUserForm, StaffPaymentMethodForm
 
 # Constants
@@ -836,15 +841,11 @@ def loan_apply_view(request):
         messages.error(request, "Invalid loan terms.")
         return render(request, "loan_apply.html", {"locked": False, "loan": None})
 
-    # Config and rate
-    cfg = LoanConfig.objects.first()
-    if cfg:
-        if amount < Decimal(str(cfg.min_amount)) or amount > Decimal(str(cfg.max_amount)):
-            messages.error(request, f"Loan amount must be between {cfg.min_amount} and {cfg.max_amount}.")
-            return render(request, "loan_apply.html", {"locked": False, "loan": None})
-        rate = Decimal(str(cfg.interest_rate_monthly))
-    else:
-        rate = Decimal("0.0005")
+    # Config and rate — hardcoded constants
+    if amount < LOAN_MIN_AMOUNT or amount > LOAN_MAX_AMOUNT:
+        messages.error(request, f"Loan amount must be between {LOAN_MIN_AMOUNT:,.0f} and {LOAN_MAX_AMOUNT:,.0f}.")
+        return render(request, "loan_apply.html", {"locked": False, "loan": None})
+    rate = LOAN_INTEREST_RATE
 
     total = amount + (amount * rate * Decimal(term_months))
     monthly = total / Decimal(term_months)
@@ -1907,11 +1908,8 @@ def staff_loan_edit_save(request, loan_id):
         return JsonResponse({"ok": False, "error": "term_must_be_6_12_24_36_48_60"})
 
     # Recalc monthly repayment
-    rate = loan.interest_rate_monthly
-    if rate is None:
-        cfg = LoanConfig.objects.first()
-        rate = Decimal(str(cfg.interest_rate_monthly)) if cfg else Decimal("0.0005")
-        loan.interest_rate_monthly = rate
+    rate = loan.interest_rate_monthly if loan.interest_rate_monthly is not None else LOAN_INTEREST_RATE
+    loan.interest_rate_monthly = rate
 
     total = loan.amount + (loan.amount * Decimal(str(rate)) * Decimal(loan.term_months))
     loan.monthly_repayment = total / Decimal(loan.term_months)
@@ -2194,11 +2192,8 @@ def staff_loan_update(request, loan_id):
         return redirect(next_url or request.META.get("HTTP_REFERER", "staff_loans"))
 
     # Recalc repayment
-    rate = loan.interest_rate_monthly
-    if rate is None:
-        cfg = LoanConfig.objects.first()
-        rate = Decimal(str(cfg.interest_rate_monthly)) if cfg else Decimal("0.0005")
-        loan.interest_rate_monthly = rate
+    rate = loan.interest_rate_monthly if loan.interest_rate_monthly is not None else LOAN_INTEREST_RATE
+    loan.interest_rate_monthly = rate
 
     total = loan.amount + (loan.amount * Decimal(str(rate)) * Decimal(loan.term_months))
     loan.monthly_repayment = total / Decimal(loan.term_months)

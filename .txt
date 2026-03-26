@@ -1,0 +1,1 @@
+web: python manage.py migrate && python manage.py createsuperuser --noinput || true && gunicorn config.wsgi:application --log-file -web: python manage.py migrate && python manage.py createsuperuser --noinput || true && gunicorn config.wsgi:application --log-file -

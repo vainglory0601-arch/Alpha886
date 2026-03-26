@@ -1,0 +1,241 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<style>
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.page, .page * {
+  font-family: "Ovelion", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.wrap {
+  align-items: flex-start !important;
+  justify-content: center !important;
+  padding-top: 72px !important;
+}
+
+.page {
+  width: min(520px, 94vw);
+  margin: 0 auto;
+  padding: 16px 16px 100px;
+  box-sizing: border-box;
+}
+
+/* Back button */
+.top-actions {
+  margin-top: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.top-actions-line { margin: 0; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 22px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #4a7a1e, #7CB342);
+  color: #fff;
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  box-shadow: 0 4px 12px rgba(74,122,30,.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(74,122,30,.32);
+}
+
+.back-btn:active {
+  transform: scale(.98);
+}
+
+/* Page title */
+.page-title {
+  color: #2d5a0e;
+  font-weight: 900;
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+
+
+.tg-text {
+  line-height: 1;
+}
+
+/* Main form card */
+.cardx {
+  background: #ffffff;
+  border-radius: 18px;
+  border-top: 4px solid #7CB342;
+  box-shadow: 0 4px 20px rgba(74,122,30,.10);
+  padding: 24px;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.title {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: .04em;
+  margin: 0 0 6px;
+  color: #1a1a1a;
+}
+
+.sub {
+  font-size: 12px;
+  color: #5a6a4a;
+  margin: 0;
+}
+
+/* Labels */
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: #3d6b1c;
+  margin: 12px 0 6px;
+}
+
+/* Inputs and textarea */
+input, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 1.5px solid #c8ddb0;
+  background: #f8fdf4;
+  color: #1a1a1a;
+  padding: 12px 14px;
+  outline: none;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(61,107,28,.45);
+}
+
+textarea {
+  min-height: 110px;
+  resize: none;
+}
+
+input:focus, textarea:focus {
+  border-color: #7CB342;
+  box-shadow: 0 0 0 3px rgba(124,179,66,.18);
+  background: #f8fdf4;
+}
+
+/* Send button */
+.btn {
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 16px;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4a7a1e, #7CB342);
+  box-shadow: 0 6px 20px rgba(74,122,30,.28);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74,122,30,.36);
+}
+
+.btn:active {
+  transform: scale(.99);
+}
+
+/* Success alert */
+.alert-success {
+  background: #f1f8e9;
+  border-left: 4px solid #7CB342;
+  border-radius: 10px;
+  padding: 14px;
+  color: #2e7d32;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.muted {
+  font-size: 12px;
+  color: #8a9a7a;
+  margin-top: 10px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 520px) {
+  .page { padding: 12px 12px 100px; }
+}
+</style>
+
+<div class="page">
+  <!-- TOP ACTIONS -->
+  <div class="top-actions">
+    <a class="back-btn" href="javascript:history.back()">
+      Back
+    </a>
+  </div>
+  <div class="top-actions-line"></div>
+
+  <div class="cardx">
+    <div class="title">CONTACT US</div>
+    <p class="sub">Send us a message — we will contact you soon.</p>
+  </div>
+  <!-- TELEGRAM CONTACT CARD -->
+
+
+
+  {% if sent %}
+    <div class="alert-success">
+      ✅ Thank you! We will contact you soon.
+    </div>
+  {% endif %}
+
+  <div class="cardx">
+    <form method="POST" action="/contact/">
+      {% csrf_token %}
+
+      <label>Full name</label>
+      <input type="text" name="full_name" required>
+
+      <label>Phone / WhatsApp</label>
+      <input type="tel" name="phone" required>
+
+      <label>Subject (optional)</label>
+      <input type="text" name="subject">
+
+      <label>Message</label>
+      <textarea name="message" required></textarea>
+
+      <button class="btn" type="submit">Send Message</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% load static %}
+{% block nav %}{% endblock %}
+
+{% block content %}
+<style>
+  :root {
+    --primary: #7CB342;
+    --dark-green: #4a7a1e;
+    --light-accent: #DCEDC8;
+    --page-bg: #F0F4EC;
+    --card-bg: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #3d6b1c;
+    --text-muted: #8a9a7a;
+    --border: #c8ddb0;
+    --input-bg: #f8fdf4;
+    --error: #e53935;
+  }
+
+  body {
+    background: var(--page-bg) !important;
+  }
+
+  .center {
+    min-height: calc(100vh - 120px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 22px 14px 40px;
+    box-sizing: border-box;
+    background: var(--page-bg);
+  }
+
+  .glass-card {
+    width: min(480px, 100%);
+    margin-top: 10px;
+    background: #ffffff;
+    border-radius: 20px;
+    border-top: 4px solid #7CB342;
+    box-shadow: 0 8px 32px rgba(74,122,30,.12), 0 2px 8px rgba(0,0,0,.06);
+    padding: 32px 28px;
+    box-sizing: border-box;
+    animation: slideUp .35s ease-out both;
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(10px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: .6px;
+    margin: 0 0 20px;
+    color: #2d5a0e;
+  }
+
+  .field { margin: 14px 0; }
+
+  .label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #3d6b1c;
+    margin-bottom: 6px;
+  }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f8fdf4;
+    border: 1.5px solid #c8ddb0;
+    box-sizing: border-box;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+
+  .input-wrap:focus-within {
+    border-color: #7CB342;
+    box-shadow: 0 0 0 3px rgba(124,179,66,.18);
+    background: #ffffff;
+  }
+
+  .icon-box svg {
+    width: 18px;
+    height: 18px;
+    fill: #7CB342;
+    flex-shrink: 0;
+  }
+
+  .input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    color: #1a1a1a;
+    caret-color: #4a7a1e;
+  }
+
+  .input::placeholder {
+    color: #8a9a7a;
+    opacity: 1;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #1a1a1a !important;
+    box-shadow: 0 0 0px 1000px #f8fdf4 inset !important;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  .eye-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .15s;
+  }
+  .eye-btn:hover { background: rgba(124,179,66,.10); }
+  .eye-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: #7CB342;
+  }
+
+  .btn {
+    width: 100%;
+    height: 48px;
+    border: none;
+    border-radius: 999px;
+    margin-top: 16px;
+    background: linear-gradient(135deg, #4a7a1e, #7CB342);
+    color: #fff;
+    font-weight: 800;
+    font-size: 15px;
+    letter-spacing: .5px;
+    box-shadow: 0 4px 14px rgba(74,122,30,.30);
+    cursor: pointer;
+    transition: opacity .2s, transform .05s;
+  }
+  .btn:hover  { opacity: .93; }
+  .btn:active { transform: translateY(1px); }
+
+  .foot {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 13px;
+    color: #5a6a4a;
+  }
+  .foot a {
+    color: #4a7a1e;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .foot a:hover { text-decoration: underline; }
+
+  .err {
+    background: #ffebee;
+    color: #c62828;
+    border-left: 4px solid #e53935;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .suspended-box {
+    background: #ffebee;
+    color: #c62828;
+    font-weight: 800;
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #e53935;
+    margin-bottom: 14px;
+    font-size: 14px;
+    letter-spacing: .5px;
+  }
+
+  @media (max-width: 480px) {
+    .glass-card { padding: 24px 18px; border-radius: 16px; }
+    .btn { height: 46px; }
+  }
+
+  @font-face {
+    font-family: 'Ovelion';
+    src: url("{% static 'fonts/Ovelion-Regular.ttf' %}") format('truetype');
+  }
+
+  body, body * {
+    font-family: 'Ovelion', sans-serif !important;
+  }
+</style>
+
+<div class="center">
+  <div class="glass-card">
+
+    <div class="title">Login</div>
+
+    {% if suspended %}
+    <div class="suspended-box">
+       ACCOUNT SUSPENDED
+    </div>
+    {% endif %}
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="err"><strong>Login failed:</strong> {{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if form.errors %}
+    <div class="err"> Phone or password incorrect. Please try again.</div>
+    {% endif %}
+
+    <form method="post" autocomplete="off">
+      {% csrf_token %}
+
+      <div class="field">
+        <div class="label">Phone Number</div>
+        <div class="input-wrap">
+          <div class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M6.6 10.8c1.8 3.6 3.9 5.7 7.5 7.5l2.5-2.5c.3-.3.7-.4 1.1-.3 1.2.4 2.6.7 4 .7.6 0 1 .4 1 1V21c0 .6-.4 1-1 1C10.6 22 2 13.4 2 2c0-.6.4-1 1-1h3.1c.6 0 1 .4 1 1 0 1.4.2 2.8.7 4 .1.4 0 .8-.3 1.1L6.6 10.8z"/>
+            </svg>
+          </div>
+          <input class="input" type="text" name="phone" placeholder="Phone number" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Password</div>
+        <div class="input-wrap">
+          <div class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 1a5 5 0 00-5 5v3H6a2 2 0 00-2 2v9a2 2 0 002 2h12a2 2 0 002-2v-9a2 2 0 00-2-2h-1V6a5 5 0 00-5-5zm-3 8V6a3 3 0 016 0v3H9z"/>
+            </svg>
+          </div>
+
+          <input id="pwd" class="input" type="password" name="password" placeholder="Password" required>
+
+          <button type="button" class="eye-btn" id="togglePwd" aria-label="Show password">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn" type="submit">→ LOGIN</button>
+
+      <div class="foot">
+        No account? <a href="/register/">Register</a>
+      </div>
+    </form>
+
+  </div>
+</div>
+
+<script>
+  (function(){
+    const pwd = document.getElementById("pwd");
+    const btn = document.getElementById("togglePwd");
+    btn.addEventListener("click", () => {
+      pwd.type = (pwd.type === "password") ? "text" : "password";
+    });
+  })();
+</script>
+{% endblock %}

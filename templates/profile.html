@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<style>
+  body, body * {
+    font-family: "Ovelion", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif !important;
+  }
+
+  body {
+  }
+
+  /* ── Wrapper ── */
+  .p-wrap {
+    width: min(520px, 94vw);
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+    box-sizing: border-box;
+  }
+
+  /* ── Status alert banner ── */
+  .status-alert {
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 12px 16px;
+    border-radius: 999px;
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: .4px;
+    box-sizing: border-box;
+  }
+  .status-danger  { background: #dc2626; color: #fff; }
+  .status-success { background: #16a34a; color: #fff; }
+  .status-warn    { background: #eab308; color: #111; }
+
+  /* ── Hero / Diamond card ── */
+  .cardx.card-diamond {
+    background: linear-gradient(135deg, #1e4a06 0%, #2d6b0a 50%, #7CB342 100%) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(124,179,66,.35) !important;
+    border-top: 1px solid rgba(124,179,66,.35) !important;
+    box-shadow: 0 8px 32px rgba(74,122,30,.35) !important;
+    padding: 24px 20px;
+    color: #ffffff !important;
+    margin-bottom: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .cardx.card-diamond::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.10) 50%, transparent 100%);
+    transform: translateX(-120%);
+    animation: heroShine 4s ease-in-out infinite;
+  }
+  @keyframes heroShine {
+    0%, 55% { transform: translateX(-120%); }
+    100%     { transform: translateX(120%); }
+  }
+
+  .cardx.card-diamond > * { position: relative; z-index: 2; }
+
+  .cardx.card-diamond,
+  .cardx.card-diamond * {
+    color: #fff !important;
+  }
+
+  /* ── Card head row ── */
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .h-title {
+    font-weight: 950;
+    font-size: 18px;
+    letter-spacing: .02em;
+    color: #fff !important;
+  }
+  .h-sub {
+    font-size: 12px;
+    color: rgba(255,255,255,.80) !important;
+    margin-top: 2px;
+  }
+
+  /* Balance amount on hero card */
+  .amount {
+    font-size: 26px;
+    font-weight: 950;
+    color: #DCEDC8 !important;
+    margin-top: 4px;
+  }
+
+  /* Status badge inside hero card */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+  .status-active  { background: rgba(255,255,255,.20); color: #fff !important; border: 1px solid rgba(255,255,255,.30); }
+  .status-warn    { background: rgba(234,179,8,.30);   color: #ffe082 !important; border: 1px solid rgba(234,179,8,.40); }
+  .status-danger  { background: rgba(220,38,38,.30);   color: #ffcdd2 !important; border: 1px solid rgba(220,38,38,.40); }
+
+  /* ── Section title ── */
+  .menu-label {
+    color: #2d5a0e;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    margin: 16px 0 8px;
+  }
+
+  /* ── Menu grid ── */
+  .menu { display: grid; gap: 0; }
+
+  /* ── Menu buttons ── */
+  .p-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    text-decoration: none;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e0eed0;
+    box-shadow: 0 2px 8px rgba(74,122,30,.06);
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease, transform .08s ease;
+    overflow: hidden;
+  }
+  .p-btn:hover {
+    background: #f1f8e9;
+    border-color: #7CB342;
+  }
+  .p-btn:active { transform: scale(.99); }
+
+  /* ── Left cluster ── */
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  /* ── Icon container ── */
+  .ico {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(124,179,66,.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+  .ico svg {
+    width: 20px;
+    height: 20px;
+    fill: #4a7a1e;
+    opacity: .95;
+  }
+
+  /* ── Text block ── */
+  .txt { min-width: 0; }
+  .t1 {
+    font-weight: 950;
+    font-size: 14px;
+    letter-spacing: .02em;
+    color: #1a1a1a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .t2 {
+    font-size: 12px;
+    color: #8a9a7a;
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ── Chevron ── */
+  .chev {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    background: rgba(124,179,66,.10);
+    border: 1px solid rgba(124,179,66,.20);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+  }
+  .chev svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: rgba(74,122,30,.60);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ── Back button ── */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: rgba(124,179,66,.12);
+    color: #4a7a1e !important;
+    border: 1px solid rgba(124,179,66,.30);
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+    transition: background .15s ease, transform .08s ease;
+  }
+  .back-btn:hover  { background: rgba(124,179,66,.20); transform: translateY(-1px); }
+  .back-btn:active { transform: scale(.98); }
+
+  /* ── Top actions row ── */
+  .top-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  /* ── Logout modal overlay ── */
+  .logout-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,.45);
+    z-index: 9999;
+    padding: 18px 14px;
+    box-sizing: border-box;
+  }
+  .logout-modal.show { display: flex; }
+
+  /* ── Logout modal box ── */
+  .logout-box {
+    width: min(420px, 92vw);
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.25);
+    overflow: hidden;
+    padding: 28px;
+    text-align: center;
+  }
+  .logout-title {
+    font-weight: 900;
+    font-size: 18px;
+    color: #1a1a1a !important;
+    margin-bottom: 8px;
+    letter-spacing: .2px;
+  }
+  .logout-text {
+    font-size: 14px;
+    color: #5a6a4a !important;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .logout-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+  .btn-cancel {
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 999px;
+    border: 2px solid #c8ddb0;
+    background: #ffffff;
+    color: #5a6a4a !important;
+    font-weight: 900;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background .15s ease;
+  }
+  .btn-cancel:hover { background: #f1f8e9; }
+
+  .btn-confirm {
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 999px;
+    border: 0;
+    background: linear-gradient(135deg, #c62828, #e53935);
+    color: #fff !important;
+    font-weight: 900;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(198,40,40,.30);
+    transition: opacity .15s ease, transform .08s ease;
+  }
+  .btn-confirm:hover  { opacity: .92; }
+  .btn-confirm:active { transform: scale(.98); }
+
+  @media (max-width: 520px) {
+    .top-actions { padding: 0; }
+  }
+</style>
+
+<div class="p-wrap">
+  <div id="statusAlert"
+     class="status-alert"
+     style="display:none;"
+     data-msg="{{ request.user.status_message|default:''|escapejs }}"
+     {% if request.user.status_message %}data-lock="1"{% endif %}></div>
+
+    <div class="cardx card-diamond" id="profile-currency-section">
+      <div class="head">
+        <div>
+          <div class="h-title">Profile</div>
+          <div class="h-sub">Account: {{ request.user.phone }}</div>
+        </div>
+
+        {% with color_key=request.user.account_status|default:"ACTIVE"|upper display_text=request.user.dashboard_status_label|default:request.user.account_status|default:"ACTIVE" %}
+          <span id="accStatusBadge"
+            class="status-badge
+            {% if color_key == 'ACTIVE' or color_key == 'APPROVED' or color_key == 'LOAN_PAID' or color_key == 'WITHDRAWAL_SUCCESSFUL' or color_key == 'ACCOUNT_UPDATED' %}status-active
+            {% elif color_key == 'APP_MAINTENANCE' or color_key == 'INVALID_DETAIL' or color_key == 'RENEW_DOCUMENT_REQUIRED' %}status-warn
+            {% else %}status-danger{% endif %}">
+            {{ display_text }}
+          </span>
+        {% endwith %}
+      </div>
+
+      <div style="font-size:12px; opacity:.85;">
+        <div class="amount">₱ <span data-balance>{{ request.user.balance|default:"0.00" }}</span></div>
+      </div>
+    </div>
+
+    <div class="menu" id="menu">
+      <a class="p-btn" href="/credit-score/">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4zM6 17V7h3v10H6zm5 0V4h3v13h-3zm5 0v-9h3v9h-3z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Credit Score</div>
+            <div class="t2">View your score & level</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <a class="p-btn" href="/loan-apply/">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M6 2h9l3 3v17H6V2zm9 1.5V6h2.5L15 3.5zM8 9h8v2H8V9zm0 4h8v2H8v-2zm0 4h6v2H8v-2z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Loan Application</div>
+            <div class="t2">Apply & track your status</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <a class="p-btn" href="/transactions/">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 7h14v4H7V7zM3 6h3v6H3V6zm4 9h14v4H7v-4zM3 14h3v6H3v-6z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Transactions</div>
+            <div class="t2">History of deposits & withdrawals</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <a class="p-btn" href="{% url 'payment_method' %}">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M3 7h18v10H3V7zm2 2v2h14V9H5zm0 4v2h6v-2H5z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Payment Method</div>
+            <div class="t2">Add payout details</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <a class="p-btn" href="{% url 'agreement' %}">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2h9l3 3v17H6V2zm9 1.5V6h2.5L15 3.5zM8 9h8v2H8V9zm0 4h8v2H8v-2zm0 4h6v2H8v-2z"/>
+            </svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Agreement</div>
+            <div class="t2">Terms, conditions & disclosures</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <a class="p-btn" href="/payment-schedule/">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 2v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2H9V2H7zm14 8H3V8h18v2z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Payment Schedule</div>
+            <div class="t2">Installments & due dates</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <!-- ✅ Logout button => open confirm modal -->
+      <a class="p-btn" href="#" id="logoutBtn" aria-label="Logout">
+        <div class="left">
+          <div class="ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M10 17l1.4-1.4-2.6-2.6H20v-2H8.8l2.6-2.6L10 7l-7 7 7 7zM4 4h7V2H4a2 2 0 0 0-2 2v6h2V4zm0 18h7v-2H4v-6H2v6a2 2 0 0 0 2 2z"/></svg>
+          </div>
+          <div class="txt">
+            <div class="t1">Logout</div>
+            <div class="t2">Securely exit your account</div>
+          </div>
+        </div>
+        <div class="chev" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- TOP ACTIONS -->
+    <div class="top-actions">
+      <a class="back-btn" href="{% url 'dashboard' %}">Back</a>
+    </div>
+    <div class="top-actions-line"></div>
+
+    <!-- ✅ Logout Confirm Modal -->
+    <div id="logoutModal" class="logout-modal" aria-hidden="true">
+      <div class="logout-box" role="dialog" aria-modal="true" aria-label="Confirm Logout">
+        <div class="logout-title">Confirm Logout</div>
+        <div class="logout-text">Are you sure you want to logout?</div>
+
+        <div class="logout-actions">
+          <button type="button" class="btn-cancel" id="logoutCancel">Cancel</button>
+
+          <form method="post" action="/logout/" style="margin:0;">
+            {% csrf_token %}
+            <button type="submit" class="btn-confirm" id="logoutConfirm">Logout</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const btn = document.getElementById("logoutBtn");
+      const modal = document.getElementById("logoutModal");
+      const cancel = document.getElementById("logoutCancel");
+      if(!btn || !modal) return;
+
+      function openModal(e){
+        if(e) e.preventDefault();
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden","false");
+      }
+      function closeModal(){
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden","true");
+      }
+
+      btn.addEventListener("click", openModal);
+      if(cancel) cancel.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if(e.target === modal) closeModal();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if(e.key === "Escape") closeModal();
+      });
+    })();
+  </script>
+  <script>
+(function(){
+  const el = document.getElementById("statusAlert");
+  if(!el) return;
+
+  const msg = (el.dataset.msg || "").trim();
+  if(!msg) return;
+
+  el.textContent = msg;
+  el.style.display = "block";
+
+  // reset
+  el.classList.remove("status-danger","status-success","status-warn");
+
+  // auto color by keywords (edit if you want)
+  const m = msg.toLowerCase();
+  const isGreen  = m.includes("approved") || m.includes("success") || m.includes("active");
+  const isYellow = m.includes("maintenance") || m.includes("invalid") || m.includes("warning");
+
+  if(isGreen) el.classList.add("status-success");
+  else if(isYellow) el.classList.add("status-warn");
+  else el.classList.add("status-danger");
+})();
+</script>
+  {% endblock %}

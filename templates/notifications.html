@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<style>
+/* ===== GreenLeaf Design System — Notifications ===== */
+
+body{
+}
+
+/* ===== Page wrapper ===== */
+.dash-wrap{
+  width: min(520px, 94vw);
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 80px 16px 100px;
+  box-sizing: border-box;
+}
+
+/* ===== Back button ===== */
+.back-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background: rgba(124,179,66,.12);
+  color: #4a7a1e;
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid rgba(124,179,66,.3);
+  transition: background .18s ease, transform .14s ease;
+  margin-bottom: 16px;
+  position: relative;
+}
+.back-btn:hover{ background: rgba(124,179,66,.20); transform: translateY(-1px); }
+.back-btn:active{ transform: translateY(0); opacity: .9; }
+
+@media (max-width:520px){
+  .back-btn{ height: 38px; padding: 0 16px; font-size: 13px; }
+}
+
+/* ===== Main card ===== */
+.cardx{
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  border: none;
+  border-top: 4px solid #7CB342;
+  box-shadow: 0 4px 20px rgba(74,122,30,.10);
+  overflow: hidden;
+  padding: 20px;
+  color: #1a1a1a;
+}
+
+/* ===== Page title ===== */
+.notif-title{
+  color: #2d5a0e;
+  font-weight: 900;
+  font-size: 18px;
+  margin: 0 0 16px;
+}
+
+/* ===== Muted text ===== */
+.muted{
+  color: #3d3d3d;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ===== Message boxes ===== */
+.msg-box{
+  background: #f8fdf4;
+  border-radius: 12px;
+  border-left: 4px solid #c8ddb0;
+  padding: 14px;
+  margin-bottom: 10px;
+  margin-top: 0;
+  position: relative;
+  color: #1a1a1a;
+  box-shadow: none;
+}
+
+.msg-box.success{
+  border-left-color: #7CB342;
+  background: #f1f8e9;
+}
+
+.msg-box.info{
+  border-left-color: #7CB342;
+  background: #f1f8e9;
+}
+
+.msg-box.danger{
+  border-left-color: #e53935;
+  background: #ffebee;
+  color: #c62828;
+}
+
+/* ===== Message icon ===== */
+.msg-ico{
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  float: left;
+  margin-right: 12px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  background: rgba(124,179,66,.15);
+  border: 1px solid rgba(124,179,66,.25);
+}
+.msg-box.danger .msg-ico{
+  background: rgba(229,57,53,.12);
+  border-color: rgba(229,57,53,.25);
+}
+.msg-ico svg{ width: 16px; height: 16px; }
+.msg-box.danger .msg-ico svg{ fill: #e53935; }
+.msg-box:not(.danger) .msg-ico svg{ fill: #4a7a1e; }
+
+/* ===== Message body ===== */
+.msg-body{
+  text-align: left;
+  padding: 0;
+  overflow: hidden;
+}
+.msg-head{
+  font-weight: 800;
+  font-size: 15px;
+  color: #2d5a0e;
+  letter-spacing: .01em;
+  margin: 0 0 4px;
+  text-align: left;
+}
+.msg-box.danger .msg-head{
+  color: #c62828;
+}
+
+.msg-text{
+  margin: 0;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.45;
+  text-align: left;
+  padding: 0;
+  color: #3d3d3d;
+  font-size: 13px;
+}
+.msg-box.danger .msg-text{
+  color: #b71c1c;
+}
+
+.msg-meta{
+  margin-top: 8px;
+  font-size: 11px;
+  color: #8a9a7a;
+  text-align: left;
+}
+.msg-box.danger .msg-meta{
+  color: #c17070;
+}
+
+/* ===== Empty state ===== */
+.empty-note{
+  margin-top: 14px;
+  padding: 40px 20px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  color: #8a9a7a;
+  text-align: center;
+  font-size: 14px;
+}
+</style>
+
+<div class="dash-wrap">
+  <div class="cardx">
+
+    {% if items %}
+      {% for n in items %}
+        {% if n.kind == "success" %}
+          <div class="msg-box success">
+            <div class="msg-body">
+              <div class="msg-head">{{ n.title }}</div>
+              <div class="muted msg-text">{{ n.msg }}</div>
+              {% if n.at %}
+                <div class="muted msg-meta">Updated: {{ n.at }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% else %}
+          <div class="msg-box danger">
+            <div class="msg-ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z"/>
+              </svg>
+            </div>
+
+            <div class="msg-body">
+              <div class="msg-head">{{ n.title }}</div>
+              <div class="muted msg-text">{{ n.msg }}</div>
+              {% if n.at %}
+                <div class="muted msg-meta">Updated: {{ n.at }}</div>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    {% else %}
+      <div class="empty-note">
+        <div class="muted" style="font-weight:900; color:#2d5a0e;">No notifications</div>
+        <div class="muted" style="margin-top:4px;">You don't have any new messages right now.</div>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <div class="top-actions">
+    <a class="back-btn" href="{% url 'dashboard' %}">Back</a>
+  </div>
+  <div class="top-actions-line"></div>
+</div>
+{% endblock %}

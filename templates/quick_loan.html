@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+{% block title %}Quick Loan{% endblock %}
+
+{% block content %}
+<style>
+  /* ===== GreenLeaf Design System — quick_loan.html ===== */
+
+  html, body {
+  }
+
+  .wrap { align-items: flex-start; }
+
+  .page {
+    width: min(520px, 94vw);
+    margin: 0 auto;
+    padding: 16px 16px 100px;
+    box-sizing: border-box;
+  }
+
+  /* ===== Back button ===== */
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: rgba(124,179,66,.12);
+    color: #4a7a1e;
+    font-weight: 800;
+    font-size: 14px;
+    text-decoration: none;
+    border: 1px solid rgba(124,179,66,.3);
+    transition: transform .15s ease, background .15s ease;
+  }
+  .back-btn:hover { transform: translateY(-1px); background: rgba(124,179,66,.20); }
+  .back-btn:active { transform: translateY(0); opacity: .9; }
+
+  /* ===== Page title ===== */
+  .page-title {
+    color: #2d5a0e;
+    font-weight: 900;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* ===== Cards ===== */
+  .cardx {
+    background: #ffffff;
+    border-radius: 18px;
+    border-top: 3px solid #7CB342;
+    border-left: none;
+    box-shadow: 0 3px 16px rgba(74,122,30,.08), 0 8px 32px rgba(0,0,0,.04);
+    padding: 20px;
+    color: #1a1a1a;
+    margin-bottom: 16px;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    overflow: visible;
+  }
+  .cardx::before, .cardx::after { display: none; }
+
+  /* ===== Section label ===== */
+  .cardx label,
+  .field > label {
+    display: block;
+    color: #3d6b1c;
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  /* ===== Amount input ===== */
+  input[type="number"] {
+    width: 100%;
+    background: #f8fdf4;
+    border: 2px solid #c8ddb0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #2d5a0e;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  input[type="number"]:focus {
+    border-color: #7CB342;
+    box-shadow: 0 0 0 3px rgba(124,179,66,.18);
+  }
+  input[readonly] { opacity: .9; cursor: default; }
+
+  /* ===== Term grid ===== */
+  .term-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+  @media (max-width: 520px) {
+    .term-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .term-btn {
+    padding: 12px 8px;
+    border-radius: 12px;
+    border: 2px solid #c8ddb0;
+    background: #f8fdf4;
+    color: #4a7a1e;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all .2s ease;
+  }
+  .term-btn:hover { border-color: #7CB342; background: #f1f8e9; }
+  .term-btn:active { transform: scale(.97); }
+  .term-btn.active {
+    background: #7CB342;
+    border-color: #7CB342;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(124,179,66,.35);
+  }
+  .term-btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* ===== Hint ===== */
+  .hint { margin-top: 8px; color: #5a6a4a; font-size: 13px; }
+
+  /* ===== Summary ===== */
+  .summary {
+    margin-top: 14px;
+    border-top: 1px solid #f0f4ec;
+    padding-top: 6px;
+    display: grid;
+    gap: 0;
+    font-size: 14px;
+  }
+  .summary .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid #f0f4ec;
+    padding: 10px 0;
+  }
+  .summary .row:last-child {
+    border-bottom: none;
+    border-top: 2px solid #DCEDC8;
+    margin-top: 4px;
+    font-size: 16px;
+  }
+  .summary .k { color: #5a6a4a; }
+  .summary .v { color: #2d5a0e; font-weight: 800; }
+
+  /* ===== CTA button ===== */
+  .cta { margin-top: 12px; width: 100%; }
+
+  #goApply {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #4a7a1e, #7CB342);
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 15px;
+    box-shadow: 0 4px 16px rgba(74,122,30,.30);
+    cursor: pointer;
+    transition: opacity .2s, transform .15s;
+  }
+  #goApply:hover { transform: translateY(-1px); }
+  #goApply:active { transform: translateY(0); }
+  #goApply:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+  /* ===== Status card (warning top border) ===== */
+  #statusCard {
+    border-top-color: #f9a825;
+  }
+
+  .status-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .status-title {
+    font-size: 18px;
+    font-weight: 900;
+    margin: 0;
+    color: #1a1a1a;
+  }
+  .status-sub {
+    margin-top: 6px;
+    color: #5a6a4a;
+    line-height: 1.35;
+    font-size: 13px;
+  }
+
+  /* ===== Status pill ===== */
+  .mini-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 12px;
+    background: #f1f8e9;
+    color: #2e7d32;
+    white-space: nowrap;
+    border: none;
+  }
+  .mini-pill.is-rejected {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  /* ===== View contract button ===== */
+  .status-btn {
+    flex: 0 0 auto;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(124,179,66,.35);
+    background: rgba(124,179,66,.10);
+    color: #4a7a1e;
+    font-weight: 800;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .status-btn:hover { background: rgba(124,179,66,.20); }
+
+  /* ===== Progress timeline ===== */
+  .step-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .dot {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+    background: #d8e8c0;
+    color: #3d6b1c;
+    flex-shrink: 0;
+  }
+  .dot.active {
+    background: #7CB342;
+    color: #fff;
+    box-shadow: 0 0 8px rgba(124,179,66,.45);
+  }
+  .line {
+    flex: 1; height: 3px; border-radius: 999px;
+    background: #d8e8c0;
+  }
+  .line.active { background: #7CB342; }
+
+  .step-labels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: #5a6a4a;
+  }
+  .step-labels.three {
+    grid-template-columns: repeat(3, 1fr);
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+  }
+
+  /* ===== Reject alert ===== */
+  .reject-alert {
+    margin-top: 12px;
+    border-radius: 12px;
+    padding: 14px;
+    border: 1px solid rgba(198,40,40,.30);
+    background: #ffebee;
+    color: #c62828;
+  }
+  .reject-alert .ra-title { font-weight: 900; }
+  .reject-alert .ra-text { margin-top: 6px; opacity: .9; }
+
+  /* ===== Top actions ===== */
+  .top-actions { padding: 4px 0 12px; }
+  .top-actions-line { margin: 0 0 14px; border: 0; }
+
+  @media (max-width: 520px) {
+    .top-actions { padding: 4px 0 10px; }
+  }
+</style>
+
+<div class="page">
+
+  <!-- ===== Card 1: Amount/Term ===== -->
+  <div class="cardx">
+    <div class="top-actions">
+      <a class="back-btn" href="{% url 'dashboard' %}">
+        Back
+      </a>
+    </div>
+    <div class="top-actions-line"></div>
+    <div class="field">
+      <label>Loan amount (Min 80,000 • Max 5,000,000)</label>
+      <input
+        type="number"
+        id="qAmount"
+        min="80000"
+        max="5000000"
+        placeholder="Enter amount"
+        {% if loan %}readonly{% endif %}
+      >
+    </div>
+
+    <div class="field" style="margin-top:12px;">
+      <label>Loan terms</label>
+      <input type="hidden" id="qTerm">
+
+      <div class="term-grid">
+  <button type="button" class="term-btn" data-term="6" {% if loan %}disabled{% endif %}>6</button>
+  <button type="button" class="term-btn" data-term="12" {% if loan %}disabled{% endif %}>12</button>
+  <button type="button" class="term-btn" data-term="24" {% if loan %}disabled{% endif %}>24</button>
+  <button type="button" class="term-btn" data-term="36" {% if loan %}disabled{% endif %}>36</button>
+</div>
+
+      <div class="muted hint" id="qHint">Choose months</div>
+    </div>
+
+    <div class="summary" aria-live="polite">
+      <div class="row"><div class="k">Amount of loan</div><div class="v" id="qSumAmount">—</div></div>
+      <div class="row"><div class="k">Interest rate</div><div class="v">0.5%</div></div>
+      <div class="row"><div class="k">Loan period</div><div class="v" id="qSumTerm">—</div></div>
+      <div class="row"><div class="k">Monthly repayment</div><div class="v" id="qSumMonthly">—</div></div>
+    </div>
+
+    <button class="btn btn-primary cta" type="button" id="goApply" style="opacity:.65" disabled>
+      Continue to Application
+    </button>
+  </div>
+
+  <!-- ===== Card 2: Application Status (HIDDEN until: loan exists + payment method locked) ===== -->
+  <div class="cardx" id="statusCard" style="display:none;">
+    <div class="status-head">
+      <div>
+        <h2 class="status-title">Application Status</h2>
+        <div class="muted status-sub" id="statusText">
+          Our team is reviewing your documents. Please wait.
+        </div>
+      </div>
+      <span class="mini-pill" id="statusPill">PENDING</span>
+    </div>
+
+    <div class="reject-alert" id="rejectAlert" style="display:none;">
+      <div class="ra-title">Application Rejected</div>
+      <div class="ra-text">Your application was rejected. You can submit again.</div>
+    </div>
+
+    <div class="step-row">
+      <div class="dot active" id="s1">1</div>
+      <div class="line" id="l1"></div>
+      <div class="dot" id="s2">2</div>
+      <div class="line" id="l2"></div>
+      <div class="dot" id="s3">3</div>
+    </div>
+
+    <div class="step-labels three">
+      <div>Under review</div>
+      <div>Checking</div>
+      <div>Approved</div>
+    </div>
+
+    <div style="margin-top:12px;">
+      <a class="status-btn" href="{% url 'contract' %}">View contract →</a>
+    </div>
+  </div>
+
+<script>
+  const amountEl = document.getElementById("qAmount");
+  const termEl = document.getElementById("qTerm");
+  const hint = document.getElementById("qHint");
+
+  const outAmount = document.getElementById("qSumAmount");
+  const outTerm = document.getElementById("qSumTerm");
+  const outMonthly = document.getElementById("qSumMonthly");
+
+  const btns = document.querySelectorAll(".term-btn");
+  const goBtn = document.getElementById("goApply");
+
+  function fmt(n){
+    try { return Number(n).toLocaleString(); } catch (e) { return String(n); }
+  }
+
+  function update(){
+    const amount = Number(amountEl?.value || 0);
+    const term = Number(termEl?.value || 0);
+
+    if (outAmount) outAmount.textContent = amount > 0 ? ("PHP " + fmt(amount)) : "—";
+    if (outTerm) outTerm.textContent = term > 0 ? (term + " months") : "—";
+
+    const rate = 0.005; // 0.5%
+    if(amount > 0 && term > 0){
+      const total = amount + (amount * rate * term);
+      const monthly = total / term;
+      if (outMonthly) outMonthly.textContent = "PHP " + fmt(Math.round(monthly));
+
+      {% if not loan %}
+        goBtn.disabled = false;
+        goBtn.style.opacity = "1";
+      {% endif %}
+    } else {
+      if (outMonthly) outMonthly.textContent = "—";
+      {% if not loan %}
+        goBtn.disabled = true;
+        goBtn.style.opacity = ".65";
+      {% endif %}
+    }
+  }
+
+  btns.forEach((b)=>{
+    b.addEventListener("click", ()=>{
+      {% if loan %} return; {% endif %}
+      btns.forEach((x)=>x.classList.remove("active"));
+      b.classList.add("active");
+      if (termEl) termEl.value = b.dataset.term || "";
+      if (hint) hint.textContent = (b.dataset.term || "") + " months";
+      update();
+    });
+  });
+
+  if (amountEl){
+    amountEl.addEventListener("input", ()=>{
+      {% if loan %} return; {% endif %}
+      update();
+    });
+  }
+
+  {% if loan %}
+    // ✅ LOCKED: fill from DB
+    if (amountEl) amountEl.value = "{{ loan.amount }}";
+    if (termEl) termEl.value = "{{ loan.term_months }}";
+
+    btns.forEach((b)=>{
+      if ((b.dataset.term || "") === "{{ loan.term_months }}"){
+        b.classList.add("active");
+        if (hint) hint.textContent = "{{ loan.term_months }} months";
+      } else {
+        b.classList.remove("active");
+      }
+    });
+
+    goBtn.textContent = "Submitted";
+    goBtn.disabled = true;
+    goBtn.style.opacity = ".65";
+  {% else %}
+    goBtn.addEventListener("click", ()=>{
+      const amount = amountEl?.value || "";
+      const term = termEl?.value || "";
+      if(!amount || !term) return;
+      window.location.href = "{% url 'loan_apply' %}?amount=" + encodeURIComponent(amount) + "&term=" + encodeURIComponent(term);
+    });
+  {% endif %}
+
+  update();
+
+  // ===== Status Tracker (poll API) =====
+  function stepFromStatus(st){
+  const s = String(st || "").toUpperCase().trim();
+  if(s === "PENDING") return 1;
+  if(s === "REVIEW") return 2;
+  if(s === "APPROVED") return 3;
+  if(s === "PAID") return 3;      // ✅ Paid is final step (3)
+  return 1;
+}
+
+function applyStep(n, label){
+  const dots = [null, "s1", "s2", "s3"];
+  const lines = [null, "l1", "l2"];
+
+  for(let i=1;i<=3;i++){
+    const d = document.getElementById(dots[i]);
+    if(d){
+      const isDone = i < n;
+      const isActive = i <= n;
+
+      d.classList.toggle("active", isActive);
+
+      // ✅ Completed = ✓, and FINAL (step 3) when active also = ✓
+      if(isDone || (i === 3 && n === 3)){
+        d.textContent = "✓";
+      }else{
+        d.textContent = String(i);
+      }
+    }
+
+    if(i<=2){
+      const ln = document.getElementById(lines[i]);
+      if(ln) ln.classList.toggle("active", i < n);
+    }
+  }
+
+  const pill = document.getElementById("statusPill");
+  if (pill) pill.textContent = String(label || "PENDING").toUpperCase();
+
+  const text = document.getElementById("statusText");
+  const s = String(label || "").toUpperCase().trim();
+  if(text){
+    if(s === "REVIEW") text.textContent = "Initial approval in progress. Please wait.";
+    else if(s === "APPROVED") text.textContent = "Final approval. Almost done.";
+    else if(s === "PAID") text.textContent = "Success Paid. Your loan has been completed.";
+    else text.textContent = "Our team is reviewing your documents. Please wait.";
+  }
+}
+
+  async function pollLoanStatus(){
+    try{
+      const r = await fetch("{% url 'loan_status_api' %}", {
+        headers: {"X-Requested-With":"XMLHttpRequest"}
+      });
+      const j = await r.json();
+
+      const card = document.getElementById("statusCard");
+
+      // ✅ ONLY show when backend says show=True
+      if(!j || !j.ok || !j.show){
+        if(card) card.style.display = "none";
+        return;
+      }
+
+      if(card) card.style.display = "block";
+      const pill = document.getElementById("statusPill");
+const isRejected = String(j.status || "").toUpperCase() === "REJECTED";
+if (pill) pill.classList.toggle("is-rejected", isRejected);
+
+      if(String(j.status || "").toUpperCase() === "REJECTED"){
+        applyStep(1, "REJECTED");
+        const t = document.getElementById("statusText");
+        if (t) t.textContent = "Rejected. Please contact company department.";
+        return;
+      }
+
+      const n = stepFromStatus(j.status);
+      applyStep(n, j.status_label || j.status);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  pollLoanStatus();
+  setInterval(pollLoanStatus, 10000);
+  // ✅ If redirected from payment save ( ?done=1 ), show Status card immediately
+  const params = new URLSearchParams(window.location.search);
+  const fromDone = params.get("done") === "1";
+  if(fromDone){
+    const card = document.getElementById("statusCard");
+    if(card) card.style.display = "block";
+    applyStep(1, "PENDING");
+  }
+</script>
+{% endblock %}

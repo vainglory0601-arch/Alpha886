@@ -1,0 +1,279 @@
+{% extends "staff_base.html" %}
+{% load static %}
+{% block content %}
+<div class="card-h">
+  <div>
+    <div class="h1">Overview</div>
+    <div class="muted">Quick totals</div>
+  </div>
+
+<!-- ✅ Search (stay on dashboard) -->
+<form class="dash-search" method="get" action="{% url 'staff_dashboard' %}">
+  <div class="period-buttons">
+    <button type="submit" name="period" value=""
+        class="period-btn {% if period == '' %}active{% endif %}">
+        All
+    </button>
+  
+    <button type="submit" name="period" value="today"
+        class="period-btn {% if period == 'today' %}active{% endif %}">
+        Today
+    </button>
+  
+    <button type="submit" name="period" value="yesterday"
+        class="period-btn {% if period == 'yesterday' %}active{% endif %}">
+        Yesterday
+    </button>
+  
+    <button type="submit" name="period" value="this_week"
+        class="period-btn {% if period == 'this_week' %}active{% endif %}">
+        This Week
+    </button>
+  
+    <button type="submit" name="period" value="last_week"
+        class="period-btn {% if period == 'last_week' %}active{% endif %}">
+        Last Week
+    </button>
+  
+    <button type="submit" name="period" value="this_month"
+        class="period-btn {% if period == 'this_month' %}active{% endif %}">
+        This Month
+    </button>
+  
+    <button type="submit" name="period" value="last_month"
+        class="period-btn {% if period == 'last_month' %}active{% endif %}">
+        Last Month
+    </button>
+  </div>
+</form>
+</div>
+
+<div class="content staffdash staff-font">
+    <div class="stats-grid">
+
+      <!-- Total Users -->
+      <div class="stat-card stat-teal">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div>
+            <div class="muted">Total Users</div>
+            <div style="font-size:28px;font-weight:950;margin-top:6px;">{{ total_users }}</div>
+          </div>
+          <div class="stat-ico">
+            <img src="{% static 'icons/users.webp' %}" alt="Users">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <a class="btn btn-green" href="{% url 'staff_users' %}">Open →</a>
+        </div>
+      </div>
+
+      <!-- Loan Applications -->
+      <div class="stat-card stat-orange">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div>
+            <div class="muted">Loan Applications</div>
+            <div style="font-size:28px;font-weight:950;margin-top:6px;">{{ total_loans }}</div>
+          </div>
+          <div class="stat-ico">
+            <img src="{% static 'icons/loans.webp' %}" alt="Loans">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <a class="btn btn-green" href="{% url 'staff_loans' %}">Open →</a>
+        </div>
+      </div>
+
+      <!-- Withdrawals -->
+      <div class="stat-card stat-purple">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div>
+            <div class="muted">Withdrawals</div>
+            <div style="font-size:28px;font-weight:950;margin-top:6px;">{{ total_withdrawals }}</div>
+          </div>
+          <div class="stat-ico">
+            <img src="{% static 'icons/withdraw.webp' %}" alt="Withdrawals">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <a class="btn btn-green" href="{% url 'staff_withdrawals' %}">Open →</a>
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="stat-card stat-dark">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+          <div>
+            <div class="muted">Payment Methods</div>
+            <div style="font-size:28px;font-weight:950;margin-top:6px;">{{ total_payment_methods }}</div>
+          </div>
+          <div class="stat-ico">
+            <img src="{% static 'icons/payment.webp' %}" alt="Payments">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <a class="btn btn-green" href="{% url 'staff_payment_methods' %}">Open →</a>
+        </div>
+      </div>
+
+    </div>
+
+<!-- ===== Performance & Reference Grid ===== -->
+<div class="perf-wrap" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch;">
+
+  <!-- Performance Overview -->
+  <div class="perf-card">
+    <div class="perf-head">
+      <div>
+        <div class="perf-title">Performance Overview</div>
+        <div class="perf-sub">User register activity</div>
+      </div>
+    </div>
+
+    <div class="perf-bars">
+      <div class="bar teal" style="height:{{ h_today|default:120 }}px;">
+        <i class="count" data-value="{{ reg_today }}">{{ reg_today }}</i>
+        <span>Today</span>
+      </div>
+
+      <div class="bar teal" style="height:{{ h_yesterday|default:100 }}px;">
+        <i class="count" data-value="{{ reg_yesterday }}">{{ reg_yesterday }}</i>
+        <span>Yesterday</span>
+      </div>
+
+      <div class="bar orange" style="height:{{ h_this_week|default:160 }}px;">
+        <i class="count" data-value="{{ reg_this_week }}">{{ reg_this_week }}</i>
+        <span>This Week</span>
+      </div>
+
+      <div class="bar orange" style="height:{{ h_last_week|default:140 }}px;">
+        <i class="count" data-value="{{ reg_last_week }}">{{ reg_last_week }}</i>
+        <span>Last Week</span>
+      </div>
+
+      <div class="bar purple" style="height:{{ h_this_month|default:170 }}px;">
+        <i class="count" data-value="{{ reg_this_month }}">{{ reg_this_month }}</i>
+        <span>This Month</span>
+      </div>
+
+      <div class="bar purple" style="height:{{ h_last_month|default:150 }}px;">
+        <i class="count" data-value="{{ reg_last_month }}">{{ reg_last_month }}</i>
+        <span>Last Month</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Reference Number Card ===== -->
+  <div class="perf-card" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); display: flex; flex-direction: column; position: relative;">
+    
+    <!-- Header: Reference No. centered, Icons on right -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative;">
+      <div style="flex: 1;"></div> <!-- Spacer for centering -->
+      
+      <!-- Centered Title -->
+      <div style="flex: 2; text-align: center;">
+        <div style="font-size: 18px; font-weight: 800; color: rgba(255,255,255,0.95); letter-spacing: 2px; text-transform: uppercase;">Reference No.</div>
+      </div>
+      
+      <!-- Icons: Home (Frontend) + Key -->
+      <div style="flex: 1; display: flex; justify-content: flex-end; gap: 8px;">
+        <a href="/" target="_blank" title="View Frontend" 
+           style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; text-decoration: none; font-size: 18px; color: #fff; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.2);"
+           onmouseover="this.style.background='rgba(255,255,255,0.25)'; this.style.transform='translateY(-2px)';" 
+           onmouseout="this.style.background='rgba(255,255,255,0.15)'; this.style.transform='none';">
+          🏠
+        </a>
+        <div style="display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: rgba(255,255,255,0.15); border-radius: 10px; font-size: 18px; border: 1px solid rgba(255,255,255,0.2);">
+          🔑
+        </div>
+      </div>
+    </div>
+
+    <!-- Big Number Display -->
+    <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 30px 0;">
+      <div style="font-size: 64px; font-weight: 950; color: #fff; letter-spacing: 6px; text-shadow: 0 4px 20px rgba(0,0,0,0.3); line-height: 1;">
+        {{ current_reference|default:"0000" }}
+      </div>
+      <div style="font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 12px; text-align: center;">
+        Users must enter this when registering
+      </div>
+    </div>
+    
+    <!-- Update Form -->
+    <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.25);">
+      <form method="post" action="{% url 'update_reference' %}" style="display: flex; gap: 12px; align-items: center;">
+        {% csrf_token %}
+        <input type="text" name="reference_number" value="{{ current_reference }}" 
+               placeholder="Enter new reference..." 
+               style="flex: 1; padding: 12px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: #fff; font-weight: 700; font-size: 16px; outline: none; transition: all 0.2s; text-align: center; letter-spacing: 1px;" 
+               onfocus="this.style.background='rgba(255,255,255,0.2)'; this.style.borderColor='rgba(255,255,255,0.5)';" 
+               onblur="this.style.background='rgba(255,255,255,0.1)'; this.style.borderColor='rgba(255,255,255,0.3)';">
+        <button type="submit" 
+                style="background: #fff; color: #1e3c72; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.2s; white-space: nowrap; font-size: 14px;" 
+                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(0,0,0,0.3)';" 
+                onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.2)';">
+          Update
+        </button>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+  <!-- RIGHT: User detail (show only when searched_user exists) -->
+  {% if searched_user %}
+  <div class="user-mini-card" style="margin-top: 20px;">
+    <div class="user-mini-head">
+      <div class="user-mini-icon">
+        <img src="{% static 'icons/users.webp' %}" alt="User">
+      </div>
+      <div class="user-mini-phone">{{ searched_user.phone }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+    
+    </div>
+
+    <style>
+      /* ===== Dashboard period buttons (All / Today / ...) ===== */
+      .period-buttons{
+        display:flex;
+        gap:10px;
+        align-items:center;
+        flex-wrap:wrap;
+      }
+    
+      /* default (not active) */
+      .period-btn{
+        appearance:none;
+        border:1px solid rgba(0,65,130,.25);
+        background:rgba(255,255,255,.70);
+        color:#004182 !important;          /* ✅ blue text */
+        font-weight:900;
+        padding:10px 16px;
+        border-radius:12px;
+        cursor:pointer;
+        box-shadow: 0 10px 22px rgba(0,0,0,.10);
+        transition: .15s ease;
+      }
+    
+      .period-btn:hover{
+        background:rgba(0,65,130,.08);
+        border-color:rgba(0,65,130,.45);
+      }
+    
+      /* active button */
+      .period-btn.active{
+        background:#004182 !important;     /* ✅ blue background */
+        color:#fff !important;             /* ✅ white text */
+        border-color:rgba(0,65,130,.85);
+        box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      }
+      
+      /* Placeholder color for reference input */
+      input[name="reference_number"]::placeholder {
+        color: rgba(255,255,255,0.5);
+      }
+    </style>    
+{% endblock %}

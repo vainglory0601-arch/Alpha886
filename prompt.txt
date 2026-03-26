@@ -1,0 +1,32 @@
+The account suspended message box is showing but it's EMPTY - no text visible.
+
+Please fix this:
+
+1. Open accounts/views.py — find the login_view function
+   Check how it handles ?suspended=1 in the GET params
+   Make sure it passes the variable to template like this:
+   
+   suspended = request.GET.get('suspended') == '1'
+   return render(request, 'login.html', {'suspended': suspended})
+
+2. Open templates/login.html — find the suspended message block
+   Replace whatever is there with this EXACT code:
+
+   {% if suspended %}
+   <div style="background-color:#c0392b; color:#ffffff; font-weight:bold; 
+               text-align:center; padding:12px; border-radius:6px; 
+               margin-bottom:12px; font-size:15px; letter-spacing:1px;">
+     ⛔ ACCOUNT SUSPENDED
+   </div>
+   {% endif %}
+
+3. Open accounts/middleware.py — find CheckUserActiveMiddleware
+   Make sure the redirect URL is exactly:
+   return redirect(f'/login/?suspended=1')
+   NOT /login/?reason=... or anything else
+
+4. Check: is the suspended variable actually being passed to template?
+   Add this debug line temporarily in login_view:
+   print(f"DEBUG suspended={suspended}, GET={request.GET}")
+
+Show me the current code in all 3 files first, then apply the fix.

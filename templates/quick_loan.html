@@ -307,15 +307,16 @@
     </div>
     <div class="top-actions-line"></div>
     <div class="field">
-      <label>Loan amount (Min 80,000 • Max 5,000,000)</label>
+      <label>Loan amount (Min 300,000 • Max 8,000,000)</label>
       <input
         type="number"
         id="qAmount"
-        min="80000"
-        max="5000000"
+        min="300000"
+        max="8000000"
         placeholder="Enter amount"
         {% if loan %}readonly{% endif %}
       >
+      <div id="amountAlert" style="display:none; margin-top:8px; padding:10px 14px; border-radius:10px; background:#ffebee; border:1px solid rgba(198,40,40,.25); color:#c62828; font-size:13px; font-weight:700;"></div>
     </div>
 
     <div class="field" style="margin-top:12px;">
@@ -396,18 +397,37 @@
     try { return Number(n).toLocaleString(); } catch (e) { return String(n); }
   }
 
+  const MIN_AMOUNT = 300000;
+  const MAX_AMOUNT = 8000000;
+  const alertBox = document.getElementById("amountAlert");
+
   function update(){
     const amount = Number(amountEl?.value || 0);
     const term = Number(termEl?.value || 0);
 
-    if (outAmount) outAmount.textContent = amount > 0 ? ("PKR" + fmt(amount)) : "—";
+    if (outAmount) outAmount.textContent = amount > 0 ? ("PKR " + fmt(amount)) : "—";
     if (outTerm) outTerm.textContent = term > 0 ? (term + " months") : "—";
 
+    // Validate amount range
+    let amountError = "";
+    if (amount > 0 && amount < MIN_AMOUNT) {
+      amountError = "⚠ Minimum loan amount is PKR " + fmt(MIN_AMOUNT) + ". Please enter a higher amount.";
+    } else if (amount > MAX_AMOUNT) {
+      amountError = "⚠ Maximum loan amount is PKR " + fmt(MAX_AMOUNT) + ". Please enter a lower amount.";
+    }
+
+    if (alertBox) {
+      alertBox.style.display = amountError ? "block" : "none";
+      alertBox.textContent = amountError;
+    }
+
     const rate = 0.005; // 0.5%
-    if(amount > 0 && term > 0){
+    const validAmount = amount >= MIN_AMOUNT && amount <= MAX_AMOUNT;
+
+    if(amount > 0 && term > 0 && validAmount){
       const total = amount + (amount * rate * term);
       const monthly = total / term;
-      if (outMonthly) outMonthly.textContent = "PKR" + fmt(Math.round(monthly));
+      if (outMonthly) outMonthly.textContent = "PKR " + fmt(Math.round(monthly));
 
       {% if not loan %}
         goBtn.disabled = false;

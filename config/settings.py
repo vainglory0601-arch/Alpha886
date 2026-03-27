@@ -15,12 +15,15 @@ def env_list(key: str, default: str = ""):
 DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'barakahcreditsolutions.com', 'www.barakahcreditsolutions.com']
+ALLOWED_HOSTS = env_list(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,pipofinancingphincapply.com,www.pipofinancingphincapply.com,web-production-2c879.up.railway.app"
+)
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://barakahcreditsolutions.com',
-    'https://www.barakahcreditsolutions.com'
-]
+CSRF_TRUSTED_ORIGINS = env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://pipofinancingphincapply.com,https://www.pipofinancingphincapply.com,https://web-production-2c879.up.railway.app"
+)
 
 INSTALLED_APPS = [
     "staffdash",

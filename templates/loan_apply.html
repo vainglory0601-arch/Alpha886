@@ -720,10 +720,50 @@
     Submitted • Waiting for review
   </button>
 {% else %}
-  <button class="btn btn-primary cta" type="submit" name="action" value="apply_loan">
+  <button class="btn btn-primary cta" type="submit" name="action" value="apply_loan" id="submitBtn">
     Confirm Apply
   </button>
 {% endif %}
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  z-index:9999;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:20px;
+">
+  <div style="
+    background:#fff;
+    border-radius:20px;
+    padding:32px 40px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.25);
+    max-width:300px;
+    width:90%;
+  ">
+    <!-- Spinner -->
+    <div style="
+      width:56px;height:56px;
+      border:5px solid #e8f5e9;
+      border-top:5px solid #7CB342;
+      border-radius:50%;
+      animation:spin 0.9s linear infinite;
+      margin:0 auto 18px;
+    "></div>
+    <div style="font-size:17px;font-weight:900;color:#2d5a0e;margin-bottom:8px;">Submitting...</div>
+    <div style="font-size:13px;color:#5a6a4a;line-height:1.5;">Please wait while we process<br>your application.</div>
+  </div>
+</div>
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
     </form>
   </div>
@@ -995,11 +1035,18 @@ clearBtn && clearBtn.addEventListener("click", clear);
         form && form.addEventListener("submit", (e)=>{
           // if field disabled/locked -> don't validate
           if(hidden.disabled) return;
-      
+
           if(!hidden.value){
             e.preventDefault();
             alert("Please draw your signature first.");
+            return;
           }
+
+          // Show loading overlay
+          const overlay = document.getElementById("loadingOverlay");
+          const btn = document.getElementById("submitBtn");
+          if(overlay){ overlay.style.display = "flex"; }
+          if(btn){ btn.disabled = true; btn.style.opacity = ".6"; }
         });
       })();
       (function(){

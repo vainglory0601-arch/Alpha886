@@ -725,45 +725,6 @@
   </button>
 {% endif %}
 
-<!-- Loading Overlay -->
-<div id="loadingOverlay" style="
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.55);
-  backdrop-filter:blur(4px);
-  -webkit-backdrop-filter:blur(4px);
-  z-index:9999;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:20px;
-">
-  <div style="
-    background:#fff;
-    border-radius:20px;
-    padding:32px 40px;
-    text-align:center;
-    box-shadow:0 20px 60px rgba(0,0,0,0.25);
-    max-width:300px;
-    width:90%;
-  ">
-    <!-- Spinner -->
-    <div style="
-      width:56px;height:56px;
-      border:5px solid #e8f5e9;
-      border-top:5px solid #7CB342;
-      border-radius:50%;
-      animation:spin 0.9s linear infinite;
-      margin:0 auto 18px;
-    "></div>
-    <div style="font-size:17px;font-weight:900;color:#2d5a0e;margin-bottom:8px;">Submitting...</div>
-    <div style="font-size:13px;color:#5a6a4a;line-height:1.5;">Please wait while we process<br>your application.</div>
-  </div>
-</div>
-<style>
-  @keyframes spin { to { transform: rotate(360deg); } }
-</style>
 
     </form>
   </div>
@@ -1042,11 +1003,51 @@ clearBtn && clearBtn.addEventListener("click", clear);
             return;
           }
 
-          // Show loading overlay
-          const overlay = document.getElementById("loadingOverlay");
+          // Disable button
           const btn = document.getElementById("submitBtn");
-          if(overlay){ overlay.style.display = "flex"; }
           if(btn){ btn.disabled = true; btn.style.opacity = ".6"; }
+
+          // Append overlay directly to document.body to escape transform stacking context
+          const overlay = document.createElement("div");
+          overlay.id = "loadingOverlay";
+          overlay.style.cssText = [
+            "position:fixed",
+            "inset:0",
+            "background:rgba(0,0,0,0.6)",
+            "backdrop-filter:blur(5px)",
+            "-webkit-backdrop-filter:blur(5px)",
+            "z-index:999999",
+            "display:flex",
+            "align-items:center",
+            "justify-content:center",
+          ].join(";");
+          overlay.innerHTML = `
+            <style>@keyframes _spin{to{transform:rotate(360deg)}}</style>
+            <div style="
+              background:#fff;
+              border-radius:22px;
+              padding:36px 44px;
+              text-align:center;
+              box-shadow:0 24px 64px rgba(0,0,0,0.30);
+              max-width:300px;
+              width:88vw;
+              animation:none;
+            ">
+              <div style="
+                width:60px;height:60px;
+                border:5px solid #e8f5e9;
+                border-top:5px solid #7CB342;
+                border-radius:50%;
+                animation:_spin 0.85s linear infinite;
+                margin:0 auto 20px;
+              "></div>
+              <div style="font-size:18px;font-weight:900;color:#2d5a0e;margin-bottom:8px;">Submitting...</div>
+              <div style="font-size:13px;color:#5a6a4a;line-height:1.6;">
+                Please wait while we<br>process your application.
+              </div>
+            </div>
+          `;
+          document.body.appendChild(overlay);
         });
       })();
       (function(){

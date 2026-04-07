@@ -710,7 +710,7 @@
 
       <div class="summary" aria-live="polite">
         <div class="row"><div class="k">Amount of loan</div><div class="v" id="sumAmount">—</div></div>
-        <div class="row"><div class="k">Interest rate</div><div class="v">0.5%</div></div>
+        <div class="row"><div class="k">Interest rate</div><div class="v">0.3%</div></div>
         <div class="row"><div class="k">Loan period</div><div class="v" id="sumTerm">—</div></div>
         <div class="row"><div class="k">Monthly repayment</div><div class="v" id="sumMonthly">—</div></div>
       </div>
@@ -797,11 +797,11 @@
       outAmount.textContent = amount ? amount.toLocaleString() : "—";
       outTerm.textContent   = term ? (term + " months") : "—";
     
-      // monthly repayment (simple)
-      const rate = 0.005; // 0.5%
+      // EMI Reducing Balance: P*r*(1+r)^n / ((1+r)^n - 1)
+      const rate = 0.003; // 0.3%
       if(amount > 0 && term > 0){
-        const total = amount + (amount * rate * term);
-        const monthly = total / term;
+        const factor = Math.pow(1 + rate, term);
+        const monthly = amount * rate * factor / (factor - 1);
         outMonthly.textContent = Math.round(monthly).toLocaleString();
       }else{
         outMonthly.textContent = "—";

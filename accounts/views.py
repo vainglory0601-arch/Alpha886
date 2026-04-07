@@ -40,11 +40,25 @@ from .models import SystemSetting, User, LoanApplication, PaymentMethod, Withdra
 # Loan configuration — hardcoded, do not change via DB
 LOAN_MIN_AMOUNT = Decimal("300000.00")
 LOAN_MAX_AMOUNT = Decimal("8000000.00")
-LOAN_INTEREST_RATE = Decimal("0.005")  # 0.5% monthly
+LOAN_INTEREST_RATE = Decimal("0.003")  # 0.3% monthly
 from .forms import PaymentMethodForm, StaffUserForm, StaffPaymentMethodForm
 
 # Constants
-INTEREST_RATE_MONTHLY = Decimal("0.005")  # 0.5%
+INTEREST_RATE_MONTHLY = Decimal("0.003")  # 0.3%
+
+# ======================
+# LOAN CALCULATION
+# ======================
+def calc_emi(amount: Decimal, rate: Decimal, term_months: int) -> Decimal:
+    """
+    Reducing Balance (EMI) formula — same as banking system.
+    EMI = P * r * (1+r)^n / ((1+r)^n - 1)
+    """
+    r = rate
+    n = term_months
+    factor = (1 + r) ** n
+    emi = amount * r * factor / (factor - 1)
+    return emi.quantize(Decimal("0.01"))
 
 # ======================
 # HELPER FUNCTIONS
@@ -735,16 +749,14 @@ def contract_view(request):
         .first()
     )
 
-    # ✅ FIX: គណនាឡើងវិញដោយប្រើ 0.5% (0.005) ជំនួសឲ្យការយកពី Database ដែលខុស
+    # គណនាឡើងវិញដោយ EMI Reducing Balance 0.3%
     monthly_display = "0.00"
     if loan:
         try:
             amt = Decimal(str(loan.amount or 0))
             terms = int(loan.term_months or 0)
             if amt > 0 and terms > 0:
-                rate = Decimal("0.005")  # ✅ 0.5% ត្រឹមត្រូវ
-                total = amt + (amt * rate * terms)
-                monthly_calc = total / terms
+                monthly_calc = calc_emi(amt, LOAN_INTEREST_RATE, terms)
                 monthly_display = str(monthly_calc)
             else:
                 monthly_display = str(loan.monthly_repayment or "0.00")
@@ -757,7 +769,7 @@ def contract_view(request):
         "current_living": getattr(loan, "current_living", "") or "",
         "amount": str(getattr(loan, "amount", "") or "0.00"),
         "term_months": getattr(loan, "term_months", "") or "",
-        "interest_rate": "0.5",
+        "interest_rate": "0.3",
         "monthly_repayment": monthly_display,  # ✅ ប្រើតម្លៃដែលគណនាឡើងវិញត្រឹមត្រូវ
     }
     return render(request, "contract.html", ctx)
@@ -847,8 +859,7 @@ def loan_apply_view(request):
         return render(request, "loan_apply.html", {"locked": False, "loan": None})
     rate = LOAN_INTEREST_RATE
 
-    total = amount + (amount * rate * Decimal(term_months))
-    monthly = total / Decimal(term_months)
+    monthly = calc_emi(amount, rate, term_months)
 
         # Process images - OPTIMIZED (smaller size for Railway)
     try:
@@ -1907,12 +1918,10 @@ def staff_loan_edit_save(request, loan_id):
     if loan.term_months not in (6, 12, 24, 36, 48, 60):
         return JsonResponse({"ok": False, "error": "term_must_be_6_12_24_36_48_60"})
 
-    # Recalc monthly repayment
-    rate = loan.interest_rate_monthly if loan.interest_rate_monthly is not None else LOAN_INTEREST_RATE
+    # Recalc monthly repayment — EMI reducing balance, always 0.3%
+    rate = LOAN_INTEREST_RATE
     loan.interest_rate_monthly = rate
-
-    total = loan.amount + (loan.amount * Decimal(str(rate)) * Decimal(loan.term_months))
-    loan.monthly_repayment = total / Decimal(loan.term_months)
+    loan.monthly_repayment = calc_emi(loan.amount, rate, loan.term_months)
 
     loan.save(update_fields=["amount", "term_months", "interest_rate_monthly", "monthly_repayment"])
     return JsonResponse({"ok": True})
@@ -2191,12 +2200,10 @@ def staff_loan_update(request, loan_id):
         messages.error(request, "Term months មិនត្រឹមត្រូវ ❌")
         return redirect(next_url or request.META.get("HTTP_REFERER", "staff_loans"))
 
-    # Recalc repayment
-    rate = loan.interest_rate_monthly if loan.interest_rate_monthly is not None else LOAN_INTEREST_RATE
+    # Recalc repayment — EMI reducing balance, always 0.3%
+    rate = LOAN_INTEREST_RATE
     loan.interest_rate_monthly = rate
-
-    total = loan.amount + (loan.amount * Decimal(str(rate)) * Decimal(loan.term_months))
-    loan.monthly_repayment = total / Decimal(loan.term_months)
+    loan.monthly_repayment = calc_emi(loan.amount, rate, loan.term_months)
 
     # Status
     status = (request.POST.get("status") or "").strip().upper()

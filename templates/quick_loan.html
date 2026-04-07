@@ -335,7 +335,7 @@
 
     <div class="summary" aria-live="polite">
       <div class="row"><div class="k">Amount of loan</div><div class="v" id="qSumAmount">—</div></div>
-      <div class="row"><div class="k">Interest rate</div><div class="v">0.5%</div></div>
+      <div class="row"><div class="k">Interest rate</div><div class="v">0.3%</div></div>
       <div class="row"><div class="k">Loan period</div><div class="v" id="qSumTerm">—</div></div>
       <div class="row"><div class="k">Monthly repayment</div><div class="v" id="qSumMonthly">—</div></div>
     </div>
@@ -421,12 +421,13 @@
       alertBox.textContent = amountError;
     }
 
-    const rate = 0.005; // 0.5%
+    const rate = 0.003; // 0.3%
     const validAmount = amount >= MIN_AMOUNT && amount <= MAX_AMOUNT;
 
     if(amount > 0 && term > 0 && validAmount){
-      const total = amount + (amount * rate * term);
-      const monthly = total / term;
+      // EMI Reducing Balance formula: P*r*(1+r)^n / ((1+r)^n - 1)
+      const factor = Math.pow(1 + rate, term);
+      const monthly = amount * rate * factor / (factor - 1);
       if (outMonthly) outMonthly.textContent = "PKR " + fmt(Math.round(monthly));
 
       {% if not loan %}

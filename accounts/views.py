@@ -397,14 +397,20 @@ def payment_schedule_view(request):
         start = latest_loan.approved_at or latest_loan.created_at or timezone.now()
         first_due = start + timedelta(days=15)
 
+        rate = latest_loan.interest_rate_monthly or LOAN_INTEREST_RATE
+        rate_display = f"{float(rate) * 100:.1f}%"
+        amount = latest_loan.amount or Decimal("0")
+        monthly = latest_loan.monthly_repayment or calc_emi(amount, rate, int(latest_loan.term_months or 0))
+
         for i in range(int(latest_loan.term_months or 0)):
             due = first_due + relativedelta(months=i)
             schedules.append({
+                "no": i + 1,
                 "due_date": due.strftime("%d/%m/%Y"),
-                "loan_amount": latest_loan.amount,
+                "loan_amount": f"{amount:,.2f}",
                 "term_months": latest_loan.term_months,
-                "repayment": latest_loan.monthly_repayment,
-                "interest_rate": latest_loan.interest_rate_monthly,
+                "repayment": f"{monthly:,.2f}",
+                "interest_rate": rate_display,
             })
 
     return render(request, "payment_schedule.html", {
